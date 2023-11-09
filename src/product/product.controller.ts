@@ -16,7 +16,7 @@ import {
   ProductDto,
 } from './dto';
 import { ProductService } from './product.service';
-import { GetUser } from 'src/auth/decorator/get-user.decorator';
+import { GetUser } from '../auth/decorator/';
 import { JwtGuard } from 'src/auth/guard';
 
 @UseGuards(JwtGuard)
@@ -55,7 +55,7 @@ export class ProductController {
     );
   }
 
-  @Post('search/:searchTerm')
+  @Get('search/:searchTerm')
   searchProductByText(
     @Param('searchTerm') searchText: string,
   ) {

@@ -26,8 +26,8 @@ export class AuthService {
         data: {
           email: dto.email,
           hash,
-          firstName: dto.first_name,
-          lastName: dto.last_name,
+          first_name: dto.first_name,
+          last_name: dto.last_name,
         },
       });
 

@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -18,8 +18,8 @@ model User {
 
   email String @unique
   hash String
-  firstName String?
-  lastName String?
+  first_name String?
+  last_name String?
 
   products Product[]
 
@@ -35,7 +35,7 @@ model Product {
   description String?
   price Decimal
   quantity Int
-  upc BigInt @unique
+  upc Int @unique
 
   userId Int
   user User @relation(fields: [userId], references: [id])

@@ -2,10 +2,10 @@ import {
   Controller,
   Get,
   UseGuards,
-  Req,
   Patch,
+  Body,
 } from '@nestjs/common';
-import { GetUser } from 'src/auth/decorator/get-user.decorator';
+import { GetUser } from '../auth/decorator';
 import { ProfileDto } from './dto';
 import { JwtGuard } from 'src/auth/guard';
 import { UserService } from './user.service';
@@ -19,10 +19,10 @@ export class UserController {
     return user;
   }
 
-  @Patch(':id')
+  @Patch()
   editUser(
     @GetUser('id') userId: number,
-    @Req() dto: ProfileDto,
+    @Body() dto: ProfileDto,
   ) {
     return this.userService.editProfile(
       userId,

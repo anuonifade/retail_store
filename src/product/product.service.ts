@@ -49,7 +49,7 @@ export class ProductService {
   }
 
   getProductByUpc(upc: number) {
-    return this.prisma.product.findMany({
+    return this.prisma.product.findUnique({
       where: {
         upc,
       },
@@ -60,14 +60,22 @@ export class ProductService {
   async searchProductByText(searchTerm: string) {
     const searchWords = searchTerm
       .split(' ')
-      .join(' | ');
+      .join(' & ');
 
     return await this.prisma.product.findMany({
+      where: {
+        OR: [
+          { name: { search: searchWords } },
+          {
+            description: { search: searchWords },
+          },
+        ],
+      },
       orderBy: {
         _relevance: {
           fields: ['name', 'description'],
           search: searchWords,
-          sort: 'asc',
+          sort: 'desc',
         },
       },
     });

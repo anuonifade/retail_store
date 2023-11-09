@@ -1,26 +1,28 @@
 import {
   IsDecimal,
-  IsNotEmpty,
   IsNumber,
   IsString,
+  IsOptional,
 } from 'class-validator';
 
 export class EditProductDto {
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   name?: string;
 
+  @IsOptional()
   @IsString()
-  description: string;
+  description?: string;
 
+  @IsOptional()
   @IsNumber()
-  @IsNotEmpty()
   upc?: number;
 
+  @IsOptional()
   @IsDecimal()
-  @IsNotEmpty()
   price?: number;
 
+  @IsOptional()
   @IsNumber()
   quantity?: number;
 }
