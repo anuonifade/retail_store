@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -30,11 +31,11 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  product_name String
+  name String
   description String?
-  price String
-  stock_quantity Int
-  upc_number String @unique
+  price Decimal
+  quantity Int
+  upc BigInt @unique
 
   userId Int
   user User @relation(fields: [userId], references: [id])

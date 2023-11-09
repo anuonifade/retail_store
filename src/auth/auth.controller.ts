@@ -1,6 +1,16 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  Req,
+  Res,
+  Get,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignUpDto } from './dto';
+import { SignInDto, SignUpDto } from './dto';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -8,14 +18,46 @@ export class AuthController {
 
   @Post('signup')
   signup(@Body() dto: SignUpDto) {
-    console.log({
-      dto,
-    });
-    return this.authService.signup(dto);
+    this.authService.signup(dto);
+
+    return dto;
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post('signin')
-  signin() {
-    return this.authService.signin();
+  async signin(
+    @Body() dto: SignInDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { access_token } =
+      await this.authService.signin(dto);
+
+    res
+      .cookie('access_token', access_token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        expires: new Date(
+          Date.now() + 1 * 24 * 60 * 1000,
+        ),
+      })
+      .send({ status: 'Logged in successfully' });
+  }
+
+  @Get('logout')
+  async logout(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    res
+      .clearCookie('access_token', {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+      })
+      .send({
+        status: 'Logged out successfully',
+      });
   }
 }
