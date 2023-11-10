@@ -118,7 +118,7 @@ describe('App e2e', () => {
           .post('/auth/signin')
           .expectStatus(400);
       });
-      it('should signin', async () => {
+      it('should signin', () => {
         return pactum
           .spec()
           .post('/auth/signin')
@@ -129,152 +129,234 @@ describe('App e2e', () => {
     });
   });
 
-  // describe('User', () => {
-  //   describe('Get Profile', () => {
-  //     it('should get current user', () => {
-  //       return pactum
-  //         .spec()
-  //         .get('/users/me')
-  //         .withCookies(
-  //           'access_token',
-  //           '$S{userAccessToken}',
-  //         )
-  //         .expectStatus(200);
-  //     });
-  //   });
+  describe('User', () => {
+    describe('Get Profile', () => {
+      it('should get current user', async () => {
+        const signInDto: SignInDto = {
+          email: 'anu@gmail.com',
+          password: '1234567',
+        };
+        const cookie = await pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody(signInDto)
+          .returns((ctx) => {
+            return ctx.res.headers['set-cookie'];
+          });
 
-  //   describe('Edit user', () => {
-  //     it('should edit user', () => {
-  //       const dto: ProfileDto = {
-  //         first_name: 'Anu',
-  //         last_name: 'Onifade',
-  //       };
-  //       return pactum
-  //         .spec()
-  //         .patch('/users')
-  //         .withCookies(
-  //           'access_token',
-  //           '$S{userAt}',
-  //         )
-  //         .withBody(dto)
-  //         .expectStatus(200)
-  //         .expectBodyContains(dto.first_name)
-  //         .expectBodyContains(dto.last_name);
-  //     });
-  //   });
-  // });
+        return pactum
+          .spec()
+          .get('/users/profile')
+          .withCookies(cookie[0])
+          .expectStatus(200);
+      });
+    });
 
-  // describe('Products', () => {
-  //   describe('Get empty products', () => {
-  //     it('should get products', () => {
-  //       return pactum
-  //         .spec()
-  //         .get('/products')
-  //         .withCookies(
-  //           'access_token',
-  //           '$S{userAt}',
-  //         )
-  //         .expectStatus(200)
-  //         .expectBody([]);
-  //     });
-  //   });
+    describe('Edit user', () => {
+      it('should edit user', async () => {
+        const dto: ProfileDto = {
+          first_name: 'Anu',
+          last_name: 'Onifade',
+        };
 
-  //   describe('Create product', () => {
-  //     const dto: ProductDto = {
-  //       name: 'First Product',
-  //       description: 'First product description',
-  //       upc: 1234,
-  //       price: 20.0,
-  //       quantity: 5,
-  //     };
-  //     it('should create product', () => {
-  //       return pactum
-  //         .spec()
-  //         .post('/products')
-  //         .withCookies(
-  //           'access_token',
-  //           '$S{userAt}',
-  //         )
-  //         .withBody(dto)
-  //         .expectStatus(201)
-  //         .stores('productUpc', 'upc');
-  //     });
-  //   });
+        const signInDto: SignInDto = {
+          email: 'anu@gmail.com',
+          password: '1234567',
+        };
 
-  //   describe('Get products', () => {
-  //     it('should get products', () => {
-  //       return pactum
-  //         .spec()
-  //         .get('/products')
-  //         .withCookies(
-  //           'access_token',
-  //           '$S{userAt}',
-  //         )
-  //         .expectStatus(200)
-  //         .expectJsonLength(1);
-  //     });
-  //   });
+        const cookie = await pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody(signInDto)
+          .returns((ctx) => {
+            return ctx.res.headers['set-cookie'];
+          });
 
-  //   describe('Get product by upc', () => {
-  //     it('should get product by upc', () => {
-  //       return pactum
-  //         .spec()
-  //         .get('/products/{upc}')
-  //         .withPathParams('upc', '$S{productUpc}')
-  //         .withCookies(
-  //           'access_token',
-  //           '$S{userAt}',
-  //         )
-  //         .expectStatus(200)
-  //         .expectBodyContains('$S{productUpc}');
-  //     });
-  //   });
+        return pactum
+          .spec()
+          .patch('/users')
+          .withCookies(cookie[0])
+          .withBody(dto)
+          .expectStatus(200)
+          .expectBodyContains(dto.first_name)
+          .expectBodyContains(dto.last_name);
+      });
+    });
+  });
 
-  //   describe('Edit product by upc', () => {
-  //     const dto: EditProductDto = {
-  //       name: 'A different name',
-  //       description: 'A different description',
-  //     };
-  //     it('should edit product', () => {
-  //       return pactum
-  //         .spec()
-  //         .patch('/products/{upc}')
-  //         .withPathParams('upc', '$S{productUpc}')
-  //         .withCookies(
-  //           'access_token',
-  //           '$S{userAt}',
-  //         )
-  //         .withBody(dto)
-  //         .expectStatus(200)
-  //         .expectBodyContains(dto.name)
-  //         .expectBodyContains(dto.description);
-  //     });
-  //   });
+  describe('Products', () => {
+    describe('Get empty products', () => {
+      it('should get products', async () => {
+        const signInDto: SignInDto = {
+          email: 'anu@gmail.com',
+          password: '1234567',
+        };
+        const cookie = await pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody(signInDto)
+          .returns((ctx) => {
+            return ctx.res.headers['set-cookie'];
+          });
 
-  //   describe('Delete product by upc', () => {
-  //     it('should delete product', () => {
-  //       return pactum
-  //         .spec()
-  //         .delete('/products/{upc}')
-  //         .withPathParams('upc', '$S{productUpc}')
-  //         .withCookies(
-  //           'access_token',
-  //           '$S{userAt}',
-  //         )
-  //         .expectStatus(204);
-  //     });
+        return pactum
+          .spec()
+          .get('/products')
+          .withCookies(cookie[0])
+          .expectStatus(200)
+          .expectBody([]);
+      });
+    });
 
-  //     it('should get empty product', () => {
-  //       return pactum
-  //         .spec()
-  //         .get('/products')
-  //         .withCookies(
-  //           'access_token',
-  //           '$S{userAt}',
-  //         )
-  //         .expectStatus(200)
-  //         .expectJsonLength(0);
-  //     });
-  //   });
-  // });
+    describe('Create product', () => {
+      const dto: ProductDto = {
+        name: 'First Product',
+        description: 'First product description',
+        upc: 11223344,
+        price: '20.0',
+        quantity: 5,
+      };
+      it('should create product', async () => {
+        const signInDto: SignInDto = {
+          email: 'anu@gmail.com',
+          password: '1234567',
+        };
+        const cookie = await pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody(signInDto)
+          .returns((ctx) => {
+            return ctx.res.headers['set-cookie'];
+          });
+        return pactum
+          .spec()
+          .post('/products')
+          .withCookies(cookie[0])
+          .withBody(dto)
+          .expectStatus(201)
+          .stores('productUpc', 'upc');
+      });
+    });
+
+    describe('Get products', () => {
+      it('should get products', async () => {
+        const signInDto: SignInDto = {
+          email: 'anu@gmail.com',
+          password: '1234567',
+        };
+        const cookie = await pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody(signInDto)
+          .returns((ctx) => {
+            return ctx.res.headers['set-cookie'];
+          });
+
+        return pactum
+          .spec()
+          .get('/products')
+          .withCookies(cookie[0])
+          .expectStatus(200)
+          .expectJsonLength(1);
+      });
+    });
+
+    describe('Get product by upc', () => {
+      it('should get product by upc', async () => {
+        const signInDto: SignInDto = {
+          email: 'anu@gmail.com',
+          password: '1234567',
+        };
+        const cookie = await pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody(signInDto)
+          .returns((ctx) => {
+            return ctx.res.headers['set-cookie'];
+          });
+
+        return pactum
+          .spec()
+          .get('/products/{upc}')
+          .withPathParams('upc', '$S{productUpc}')
+          .withCookies(cookie[0])
+          .expectStatus(200)
+          .expectBodyContains('$S{productUpc}');
+      });
+    });
+
+    describe('Edit product by upc', () => {
+      const dto: EditProductDto = {
+        name: 'A different name',
+        description: 'A different description',
+      };
+      it('should edit product', async () => {
+        const signInDto: SignInDto = {
+          email: 'anu@gmail.com',
+          password: '1234567',
+        };
+        const cookie = await pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody(signInDto)
+          .returns((ctx) => {
+            return ctx.res.headers['set-cookie'];
+          });
+
+        return pactum
+          .spec()
+          .patch('/products/{upc}')
+          .withPathParams('upc', '$S{productUpc}')
+          .withCookies(cookie[0])
+          .withBody(dto)
+          .expectStatus(200)
+          .expectBodyContains(dto.name)
+          .expectBodyContains(dto.description);
+      });
+    });
+
+    describe('Delete product by upc', () => {
+      it('should delete product', async () => {
+        const signInDto: SignInDto = {
+          email: 'anu@gmail.com',
+          password: '1234567',
+        };
+        const cookie = await pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody(signInDto)
+          .returns((ctx) => {
+            return ctx.res.headers['set-cookie'];
+          });
+
+        return pactum
+          .spec()
+          .delete('/products/{upc}')
+          .withPathParams('upc', '$S{productUpc}')
+          .withCookies(cookie[0])
+          .expectStatus(204);
+      });
+
+      it('should get empty product', async () => {
+        const signInDto: SignInDto = {
+          email: 'anu@gmail.com',
+          password: '1234567',
+        };
+        const cookie = await pactum
+          .spec()
+          .post('/auth/signin')
+          .withBody(signInDto)
+          .returns((ctx) => {
+            return ctx.res.headers['set-cookie'];
+          });
+
+        return pactum
+          .spec()
+          .get('/products')
+          .withCookies(cookie[0])
+          .expectStatus(200)
+          .expectJsonLength(0);
+      });
+    });
+  });
 });

@@ -19,7 +19,7 @@ export class ProductDto {
 
   @IsDecimal()
   @IsNotEmpty()
-  price: number;
+  price: string;
 
   @IsNumber()
   quantity: number;

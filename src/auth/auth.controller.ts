@@ -42,7 +42,7 @@ export class AuthController {
           Date.now() + 1 * 24 * 60 * 1000,
         ),
       })
-      .send({ status: 'Logged in successfully' });
+      .send({ access_token });
   }
 
   @Get('logout')
@@ -52,7 +52,7 @@ export class AuthController {
   ) {
     res
       .clearCookie('access_token', {
-        httpOnly: true,
+        httpOnly: null,
         secure: false,
         sameSite: 'lax',
       })

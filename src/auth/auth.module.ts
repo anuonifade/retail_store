@@ -8,10 +8,11 @@ import { JwtStrategy } from './strategies';
 @Module({
   imports: [
     PassportModule.register({
-      defaultStrategy: 'jwt',
       session: false,
     }),
-    JwtModule.register({}),
+    JwtModule.register({
+      signOptions: { expiresIn: '7d' },
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

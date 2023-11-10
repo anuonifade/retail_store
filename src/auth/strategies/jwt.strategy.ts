@@ -17,20 +17,37 @@ export class JwtStrategy extends PassportStrategy(
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        JwtStrategy.extractJWTFromCookie,
+        JwtStrategy.extractJWTFromCookies,
       ]),
       ignoreExpiration: false,
       secretOrKey: config.get('JWT_SECRET'),
     });
   }
 
-  private static extractJWTFromCookie(
+  private static extractJWTFromCookies(
     @Req() req,
   ): string | null {
-    if (req.cookies && req.cookies.access_token) {
-      return req.cookies.access_token;
+    if (req.cookies || req.headers?.cookie) {
+      const access_token_cookie =
+        req.cookies || req.headers?.cookie;
+
+      if (
+        typeof access_token_cookie == 'string'
+      ) {
+        return JwtStrategy.extractAccessTokenFromString(
+          access_token_cookie,
+        );
+      }
+
+      return access_token_cookie.access_token;
     }
     return null;
+  }
+
+  private static extractAccessTokenFromString(
+    cookie: string,
+  ) {
+    return cookie.split(';')[0].split('=')[1];
   }
 
   async validate(payload: {
