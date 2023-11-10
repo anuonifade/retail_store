@@ -8,10 +8,21 @@ import {
   EditProductDto,
   ProductDto,
 } from './dto';
+import {
+  EventEmitter2,
+  OnEvent,
+} from '@nestjs/event-emitter';
+import { MyLogger } from 'src/log/logger.service';
 
 @Injectable()
 export class ProductService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private eventEmitter: EventEmitter2,
+    private myLogger: MyLogger,
+  ) {
+    this.myLogger.setContext('ProductService');
+  }
 
   async createProduct(
     dto: ProductDto,
@@ -26,7 +37,11 @@ export class ProductService {
           },
         });
 
-      // Emit product creation log
+      // Emit product creation event
+      this.eventEmitter.emit(
+        'product.created',
+        product,
+      );
 
       return product;
     } catch (error) {
@@ -131,5 +146,13 @@ export class ProductService {
         upc: productUpc,
       },
     });
+  }
+
+  @OnEvent('product.created', { async: true })
+  handleProductCreatedEvent(payload: ProductDto) {
+    // Handle logging of event created.
+    this.myLogger.log(
+      'Product created: ' + payload,
+    );
   }
 }

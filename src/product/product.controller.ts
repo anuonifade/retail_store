@@ -10,6 +10,7 @@ import {
   HttpCode,
   HttpStatus,
   Patch,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   EditProductDto,
@@ -18,8 +19,14 @@ import {
 import { ProductService } from './product.service';
 import { GetUser } from '../auth/decorator/';
 import { JwtGuard } from 'src/auth/guard';
+import {
+  CacheInterceptor,
+  CacheKey,
+  CacheTTL,
+} from '@nestjs/cache-manager';
 
 @UseGuards(JwtGuard)
+@UseInterceptors(CacheInterceptor)
 @Controller('products')
 export class ProductController {
   constructor(
@@ -37,6 +44,8 @@ export class ProductController {
   }
 
   @Get()
+  @CacheKey('all_products')
+  @CacheTTL(500)
   getAllProducts() {
     const products =
       this.productService.getAllProducts();
