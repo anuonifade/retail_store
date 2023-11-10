@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { GetUser } from '../auth/decorator';
 import { ProfileDto } from './dto';
-import { JwtGuard } from 'src/auth/guard';
+import { JwtGuard } from '../auth/guard';
 import { UserService } from './user.service';
 
 @UseGuards(JwtGuard)

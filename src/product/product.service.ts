@@ -3,7 +3,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import {
   EditProductDto,
   ProductDto,
@@ -12,7 +12,7 @@ import {
   EventEmitter2,
   OnEvent,
 } from '@nestjs/event-emitter';
-import { MyLogger } from 'src/log/logger.service';
+import { MyLogger } from '../log/logger.service';
 
 @Injectable()
 export class ProductService {
